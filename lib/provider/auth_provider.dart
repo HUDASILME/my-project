@@ -8,6 +8,8 @@ import 'package:newproject/helper/auth_helper.dart';
 import 'package:newproject/helper/firestor_helper.dart';
 import 'package:newproject/helper/firestorage_helper.dart';
 import 'package:newproject/model/user_model.dart';
+import 'package:newproject/ui/controlpage.dart';
+import 'package:newproject/ui/home_screen.dart';
 import 'package:newproject/ui/login_screen.dart';
 import 'package:newproject/ui/profile.dart';
 import 'package:newproject/utilites/router.dart';
@@ -31,12 +33,12 @@ class AuthProvider extends ChangeNotifier {
   registerUser() async {
     if (registerKey.currentState.validate()) {
       UserModel userModel = UserModel(
-          //city: cityController.text,
+          city: cityController.text,
           email: emailController.text,
-          fullname: fullNameController.text,
+          fullName: fullNameController.text,
           password: passwordController.text,
-          //  phoneNumber: phoneNumberController.text,
-          isadmin: isAdmin == 1 ? true : false);
+          phoneNumber: phoneNumberController.text,
+          isAdmin: isAdmin == 1 ? true : false);
       User user = await AuthHelper.authHelper
           .register(userModel.email, userModel.password);
       FirestoreHelper.firestoreHelper.createNewUser(userModel, user.uid);
@@ -81,7 +83,7 @@ class AuthProvider extends ChangeNotifier {
     if (currentUser != null) {
       this.userModel =
           await FirestoreHelper.firestoreHelper.getUser(currentUser.uid);
-      AppRouter.router.pushReplacementToNewWidget(ProfilePage());
+      AppRouter.router.pushReplacementToNewWidget(ControlPage());
     } else {
       AppRouter.router.pushReplacementToNewWidget(LoginScreen());
     }

@@ -1,226 +1,103 @@
 //import 'dart:js';
 
+import 'package:badges/badges.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:newproject/admin/admin_mainpage.dart';
+import 'package:newproject/helper/admin_firestorehelper.dart';
 import 'package:newproject/model/categiory_model.dart';
 import 'package:newproject/model/product_model.dart';
+import 'package:newproject/provider/auth_provider.dart';
 import 'package:newproject/provider/categioryProduct_provider.dart';
+import 'package:newproject/ui/categiory_result.dart';
+import 'package:newproject/ui/checkout.dart';
+import 'package:newproject/ui/productdetails.dart';
+import 'package:newproject/ui/search.dart';
+import 'package:newproject/utilites/router.dart';
+import 'package:newproject/wedget/categiory_item.dart';
 // import 'package:newproject/ui/productdetails.dart';
 // import 'package:newproject/utilites/router.dart';
 // import 'package:newproject/wedget/categiory_item.dart';
 // import 'package:newproject/wedget/product_item.dart';
+//import 'io.dart';
 import 'package:provider/provider.dart';
 
-// class HomePage extends StatefulWidget {
-//   @override
-//   HomePageState createState() => HomePageState();
-// }
-
-// //CategioryProductProvider ppc;
-
-// class HomePageState extends State<HomePage> {
-//   // TabController tabController;
-
-//   // myMethod() {
-//   //   tabController = TabController(
-//   //     length: 3,
-//   //   );
-//   // }
-
-//   // @override
-//   // void initState() {
-//   //   // TODO: implement initState
-
-//   //   super.initState();
-//   //   myMethod();
-//   // }
-
-//   int index = 0;
-//   ProductModel productModel;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         body: SingleChildScrollView(
-//       child: Container(
-//         padding: EdgeInsets.only(top: 100, left: 20, right: 20),
-//         child: Column(
-//           children: [
-//             searchTextFormField(),
-//             SizedBox(
-//               height: 30,
-//             ),
-//             Text('Categiores'),
-//             SizedBox(
-//               height: 30,
-//             ),
-//             listViewCategory(context),
-//             SizedBox(
-//               height: 30,
-//             ),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 Text('last product'),
-//                 InkWell(onTap: () {}, child: Text('see all'))
-//               ],
-//             ),
-//             SizedBox(
-//               height: 30,
-//             ),
-//             listViewLastProducts(context),
-//             // Container(
-//             //   child: Row(
-//             //     children: [
-//             //       IconButton(onPressed: () {}, icon: Icon(Icons.explore)),
-//             //       SizedBox(
-//             //         width: 20,
-//             //       ),
-//             //       IconButton(onPressed: () {}, icon: Icon(Icons.carpenter)),
-//             //       SizedBox(
-//             //         width: 20,
-//             //       ),
-//             //       IconButton(onPressed: () {}, icon: Icon(Icons.person)),
-//             //       SizedBox(
-//             //         width: 20,
-//             //       ),
-//             //     ],
-//             //   ),
-//             // )
-//           ],
-//         ),
-//       ),
-//       //             BottomNavigationBar(
-//       //   onTap: (index) {
-//       //     tabController.animateTo(index);
-//       //     this.index = index;
-//       //     print(index);
-//       //     setState(() {});
-//       //   },
-//       //   currentIndex: index,
-//       //   fixedColor: Colors.brown,
-//       //   items: [
-//       //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'enter'),
-//       //     BottomNavigationBarItem(
-//       //         icon: Icon(Icons.gavel_outlined), label: 'see this'),
-//       //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'go')
-//       //   ],
-//       // ),
-//       //  ],
-//     ));
-//   }
-// }
-
-// Widget searchTextFormField() {
-//   return Container(
-//     decoration: BoxDecoration(
-//       borderRadius: BorderRadius.circular(20),
-//       color: Colors.grey.shade200,
-//     ),
-//     child: TextFormField(
-//       decoration: InputDecoration(
-//         border: InputBorder.none,
-//         prefixIcon: Icon(
-//           Icons.search,
-//           color: Colors.black,
-//         ),
-//       ),
-//     ),
-//   );
-// }
-
-// Widget listViewCategory(context) {
-//   return Container(
-//       child: ListView.builder(
-//           scrollDirection: Axis.horizontal,
-//           itemCount:
-//               Provider.of<CategioryProductProvider>(context).categories.length,
-//           itemBuilder: (context, index) {
-//             return InkWell(
-//               onTap: () {
-//                 //categiory result
-//               },
-//               child: Catitem(
-//                   Provider.of<CategioryProductProvider>(context).categories),
-//             );
-//           }));
-// }
-// //  itemCount: Provider.of<CategioryProductProvider>(context).categories.length,
-// // itemBuilder: (context, index) {
-// //   return ProductItem(
-// //       Provider.of<Myprovider>(context).products[index],
-// //       index);
-// // })
-
-// listViewLastProducts(context) {
-//   ProductModel productModel;
-//   String id = productModel.catId;
-//   // ppc.getCategoryProducts(id);
-//   return Container(
-//       child: ListView.builder(
-//           scrollDirection: Axis.horizontal,
-//           itemCount:
-//               Provider.of<CategioryProductProvider>(context).products.length,
-//           itemBuilder: (context, index) {
-//             return InkWell(
-//               onTap: () {
-//                 AppRouter.router.pushReplacementToNewWidget(Productdetail());
-//               },
-//               child: ProductItem(Provider.of<CategioryProductProvider>(context)
-//                       .products //.where((element) => false)
-//                   ),
-//             );
-//           }));
-// }
+import 'cart_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+  int index;
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
-        // actions: [
-        //   Visibility(
-        //       visible: Provider.of<AuthProvider>(context, listen: false)
-        //           .userModel
-        //           .isAdmin,
-        //       child: IconButton(
-        //           onPressed: () {
-        //             AppRouter.router.pushToNewWidget(AdminMainPage());
-        //           },
-        //           icon: Icon(Icons.settings))),
-        //   GestureDetector(
-        //     onTap: () {
-        //       AppRouter.router.pushToNewWidget(CartPage());
-        //     },
-        //     child: Container(
-        //       margin: EdgeInsets.symmetric(horizontal: 15),
-        //       child: Badge(
-        //         stackFit: StackFit.passthrough,
+          backgroundColor: Colors.green,
+          title: Text(
+            'Home Page',
+          ),
+          actions: [
+            Visibility(
+                visible: Provider.of<AuthProvider>(context, listen: false)
+                    .userModel
+                    .isAdmin,
+                child: IconButton(
+                    onPressed: () {
+                      AppRouter.router.pushToNewWidget(AdminMainPage());
+                    },
+                    icon: Icon(Icons.settings))),
+            GestureDetector(
+                onTap: () {
+                  AppRouter.router.pushToNewWidget(CheckOut());
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 15),
+                  child: Badge(
+                    stackFit: StackFit.passthrough,
 
-        //         position: BadgePosition.bottomEnd(),
-        //         badgeContent: Text(Provider.of<CustomerProvider>(context)
-        //             .cartProducts
-        //             .length
-        //             .toString()),
+                    position: BadgePosition.bottomEnd(),
+                    badgeContent: Text(
+                        Provider.of<CategioryProductProvider>(context)
+                            .checkOutModelList
+                            .length
+                            .toString()),
 
-        //         child: Icon(Icons.shopping_cart),
-        //         // child: IconButton(
-        //         //     onPressed: () {
-        //         //       AppRouter.router.pushToNewWidget(CartPage());
-        //         //     },
-        //         //     icon: Icon(Icons.shopping_cart)),
-        //       ),
-        //     ),
-        //   )
-        // ],
-      ),
+                    child: Icon(Icons.shopping_cart),
+                    // child: IconButton(
+                    //     onPressed: () {
+                    //       AppRouter.router.pushToNewWidget(CartPage());
+                    //     },
+                    //     icon: Icon(Icons.shopping_cart)),
+                  ),
+                ))
+          ]),
+
+      // ],
+      //  ),
       body: Consumer<CategioryProductProvider>(
         builder: (context, provider, widget) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey.shade200),
+                child: TextFormField(
+                    onTap: () {
+                      AppRouter.router.pushToNewWidget(search());
+                    },
+                    decoration: InputDecoration(
+                      hintText: ('search for categiories'),
+                      border: InputBorder.none,
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.black,
+                      ),
+                    )),
+              ),
               // Container(
               //   height: MediaQuery.of(context).size.height / 4,
               //   child: SliderWidget(provider.sliders),
@@ -236,14 +113,19 @@ class HomeScreen extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     )),
               ),
+              // RaisedButton(
+              //   onPressed: () {
+              //     print(provider.categories[0].imageurl);
+              //   },
+              // ),
               Container(
                   margin: EdgeInsets.only(bottom: 10),
-                  height: 90,
+                  height: 120,
                   child: CategoriesList(provider.categories)),
               Container(
                 alignment: Alignment.centerLeft,
                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Text('Products',
+                child: Text('last Products',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 20,
@@ -258,7 +140,27 @@ class HomeScreen extends StatelessWidget {
                       )
                     : Container(
                         margin: EdgeInsets.all(10),
-                        child: ProductsWidget(provider.products)),
+                        child: GestureDetector(
+                            onTap: () {
+                              AppRouter.router.pushToNewWidget(Productdetail(
+                                  Provider.of<CategioryProductProvider>(context,
+                                          listen: false)
+                                      .products[index]
+                                      .imageUrl,
+                                  Provider.of<CategioryProductProvider>(context,
+                                          listen: false)
+                                      .products[index]
+                                      .productName,
+                                  Provider.of<CategioryProductProvider>(context,
+                                          listen: false)
+                                      .products[index]
+                                      .price,
+                                  Provider.of<CategioryProductProvider>(context,
+                                          listen: false)
+                                      .products[index]
+                                      .productDescription));
+                            },
+                            child: ProductsWidget(provider.products))),
               )
             ],
           );
@@ -309,18 +211,47 @@ class CategoriesList extends StatelessWidget {
             onTap: () {
               Provider.of<CategioryProductProvider>(context, listen: false)
                   .getCategoryProducts(categories[index].id);
+              // AppRouter.router.pushToNewWidget(catresult(
+              //     Provider.of<CategioryProductProvider>(context, listen: false)
             },
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 5),
-              height: 90,
-              width: 160,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                      colorFilter: ColorFilter.mode(
-                          Colors.black.withOpacity(0.3), BlendMode.darken),
-                      fit: BoxFit.cover,
-                      image: NetworkImage(categories[index].imageurl))),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(categories[index].imageurl),
+                    maxRadius: 40, backgroundColor: Colors.grey,
+                    // child: Container(
+                    //   margin: EdgeInsets.symmetric(horizontal: 5),
+                    //   height: 90,
+                    //   width: 150,
+                    //   decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       image: DecorationImage(
+                    //           colorFilter: ColorFilter.mode(
+                    //               Colors.black.withOpacity(0.3),
+                    //               BlendMode.darken),
+                    //           fit: BoxFit.contain,
+                    //           image: NetworkImage(categories[index].imageurl))),
+                    // ),
+                  ),
+                ),
+                InkWell(
+                    onTap: () {
+                      Provider.of<CategioryProductProvider>(context,
+                              listen: false)
+                          .getCategoryProducts(categories[index].id);
+                      AppRouter.router.pushToNewWidget(catresult(
+                          Provider.of<CategioryProductProvider>(context,
+                                  listen: false)
+                              .products,
+                          Provider.of<CategioryProductProvider>(context,
+                                  listen: false)
+                              .categories[index]
+                              .nameAr));
+                    },
+                    child: Text(categories[index].nameAr))
+              ],
             ),
             //   Positioned.fill(
             //       child: Align(
@@ -339,52 +270,75 @@ class CategoriesList extends StatelessWidget {
 }
 
 class ProductsWidget extends StatelessWidget {
-  List<ProductModel> products;
-  ProductsWidget(this.products);
+  List<ProductModel> pr;
+  ProductsWidget(this.pr);
+
   @override
   Widget build(BuildContext context) {
+    // for (int i = 0; i >= 5; i++) {
+    //   if (i == (products.length) - 5) {
+    //     break;
+    //   }
+    //   else{
     // TODO: implement build
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           mainAxisSpacing: 10, crossAxisSpacing: 10, crossAxisCount: 2),
-      itemCount: products.length,
+      itemCount: pr.length,
       itemBuilder: (context, index) {
         return Container(
           color: Colors.grey.withOpacity(0.2),
-          height: 150,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                height: 120,
-                margin: EdgeInsets.all(5),
-                child: Image.network(
-                  products[index].imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Text(products[index].productName),
-                      Text(products[index].price.toString()),
-                    ],
+          height: 250,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 150,
+                  margin: EdgeInsets.all(5),
+                  child: GestureDetector(
+                    onTap: () {
+                      AppRouter.router.pushToNewWidget(Productdetail(
+                          pr[index].imageUrl,
+                          pr[index].productDescription,
+                          pr[index].price,
+                          pr[index].productName));
+                    },
+                    child: Image.network(
+                      pr[index].imageUrl,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                  Spacer(),
-                  IconButton(
-                      onPressed: () {
-                        Provider.of<CategioryProductProvider>(context,
-                                listen: false)
-                            .addToCart(products[index]);
-                      },
-                      icon: Icon(Icons.add))
-                ],
-              ),
-            ],
+                ),
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        Text(pr[index].productName),
+                        Text(pr[index].price.toString()),
+                      ],
+                    ),
+                    Spacer(),
+                    IconButton(
+                        onPressed: () {
+                          Provider.of<CategioryProductProvider>(context,
+                                  listen: false)
+                              .addToCart(pr[index], index);
+                        },
+                        icon: Icon(
+                          Icons.favorite,
+                          color: pr[index].isfav ? Colors.white : Colors.red,
+                        ))
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
     );
   }
 }
+
+// }
+// }

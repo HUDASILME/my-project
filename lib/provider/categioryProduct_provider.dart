@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:newproject/helper/admin_firestorehelper.dart';
 import 'package:newproject/helper/firestorage_helper.dart';
 import 'package:newproject/model/categiory_model.dart';
+import 'package:newproject/model/ordermodel.dart';
 import 'package:newproject/model/product_model.dart';
 
 class CategioryProductProvider extends ChangeNotifier {
@@ -12,7 +13,10 @@ class CategioryProductProvider extends ChangeNotifier {
   List<CategoryModel> categories;
   List<ProductModel> products;
   List<ProductModel> cartProducts;
+  List<ProductModel> favouritProducts;
   CategoryModel selectedCategoryModel;
+  List<OrderModel> checkOutModelList = [];
+  OrderModel checkOutModel;
 
   TextEditingController categoryNameController = TextEditingController();
   TextEditingController productNameController = TextEditingController();
@@ -86,22 +90,99 @@ class CategioryProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  clearproduct() {
+    this.products.clear();
+    notifyListeners();
+  }
+
   getCategories() async {
     List<CategoryModel> categories =
         await AdminFirestoreHelper.adminFirestoreHelper.getAllCategories();
+
     this.categories = categories;
     getCategoryProducts(categories.first.id);
     notifyListeners();
   }
 
-  Future<ProductModel> getCart() async {
-    cartProducts = await AdminFirestoreHelper.adminFirestoreHelper.getCart();
+  Future<ProductModel> getOrders(String uid) async {
+    checkOutModelList =
+        await AdminFirestoreHelper.adminFirestoreHelper.getOrders(uid);
     notifyListeners();
   }
 
-  addToCart(ProductModel productModel) async {
+  addOrder(OrderModel orderModel, String uid) async {
+    await AdminFirestoreHelper.adminFirestoreHelper.addOrder(orderModel, uid);
+    getOrders(uid);
+  }
+
+  addToCart(ProductModel productModel, int index) async {
+    cartProducts[index].isfav = !cartProducts[index].isfav;
     await AdminFirestoreHelper.adminFirestoreHelper.addToCart(productModel);
     getCart();
+  }
+
+  Future<ProductModel> getCart() async {
+    cartProducts = await AdminFirestoreHelper.adminFirestoreHelper.getCart();
+    // cartProducts[index].isfav = true;
+
+    notifyListeners();
+  }
+
+  Future<ProductModel> getfavouirt() async {
+    favouritProducts =
+        await AdminFirestoreHelper.adminFirestoreHelper.getfavouirt();
+    notifyListeners();
+  }
+
+  addTofavourit(ProductModel productModel) async {
+    await AdminFirestoreHelper.adminFirestoreHelper.addTofavourit(productModel);
+    // favouritProducts[index].isfav = !favouritProducts[index].isfav;
+    getfavouirt();
+  }
+
+  void getCheckOutData({
+    int quentity,
+    double price,
+    String name,
+    String color,
+    String size,
+    String image,
+  }) {
+    checkOutModel = OrderModel(
+      color: color,
+      size: size,
+      price: price,
+      ordername: name,
+      image: image,
+      quentity: quentity,
+    );
+    checkOutModelList.add(checkOutModel);
+  }
+
+  List<OrderModel> get getCheckOutModelList {
+    return List.from(checkOutModelList);
+  }
+
+  void deleteCartProduct(int index) {
+    checkOutModelList.removeAt(index);
+
+    notifyListeners();
+  }
+
+  void deleteCartProductt(
+    int index,
+  ) async {
+    await //AdminFirestoreHelper.adminFirestoreHelper.deleteCartProduct(id)
+
+        AdminFirestoreHelper.adminFirestoreHelper
+            .deleteCartProduct(cartProducts[index].id);
+    cartProducts.removeAt(index);
+    notifyListeners();
+  }
+
+  void deletefavouritProduct(int index) {
+    favouritProducts.removeAt(index);
+    notifyListeners();
   }
 
   Future<String> uploadImage(String path) async {

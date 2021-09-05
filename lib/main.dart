@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 // Import the firebase_core plugin
-import 'package:flutter/rendering.dart';
+//import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:newproject/admin/admin_provider.dart';
+import 'package:newproject/helper/admin_firestorehelper.dart';
+import 'package:newproject/model/categiory_model.dart';
 import 'package:newproject/provider/auth_provider.dart';
 import 'package:newproject/provider/categioryProduct_provider.dart';
 import 'package:newproject/ui/controlpage.dart';
@@ -20,6 +23,7 @@ void main() async {
   await Firebase.initializeApp();
   runApp(MateriapAppIntializing());
 }
+//api key  AIzaSyA_09w-gG4t9CTnHUjQTRFu9RVhGN-9abU
 
 class MateriapAppIntializing extends StatelessWidget {
   @override
@@ -37,11 +41,11 @@ class MateriapAppIntializing extends StatelessWidget {
             return CategioryProductProvider();
           },
         ),
-        // ChangeNotifierProvider<AdminProvider>(
-        //   create: (context) {
-        //     return AdminProvider();
-        //   },
-        // )
+        ChangeNotifierProvider<AdminProvider>(
+          create: (context) {
+            return AdminProvider();
+          },
+        )
       ],
       child:
           MaterialApp(navigatorKey: AppRouter.router.navigatorKey, home: App()),
@@ -80,12 +84,6 @@ class _AppState extends State<App> {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          // print('////////////////////////////');
-          // Provider.of<CategioryProductProvider>(context, listen: false)
-          //     .getCategories();
-          // Future.delayed(Duration.zero).then((value) =>
-          //     Provider.of<AuthProvider>(context, listen: false)
-          //         .getCurrentUser());
           return SplachScreen();
         }
 
@@ -94,6 +92,22 @@ class _AppState extends State<App> {
           body: Text('LOADING'),
         );
       },
+    );
+  }
+}
+
+class TestScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      body: Center(child: RaisedButton(
+        onPressed: () async {
+          List<CategoryModel> categories = await AdminFirestoreHelper
+              .adminFirestoreHelper
+              .getAllCategories();
+        },
+      )),
     );
   }
 }

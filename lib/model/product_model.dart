@@ -5,23 +5,22 @@ import 'package:flutter/widgets.dart';
 
 class ProductModel {
   String id;
+  bool isfav;
   String catId;
   String productName;
   String productDescription;
   double price;
   String imageUrl;
-  String sizes;
   FieldValue createdTime;
-  ProductModel({
-    @required this.catId,
-    this.id,
-    @required this.productName,
-    @required this.productDescription,
-    @required this.price,
-    @required this.imageUrl,
-    @required this.sizes,
-    @required this.createdTime,
-  });
+  ProductModel(
+      {@required this.catId,
+      this.id,
+      @required this.productName,
+      @required this.productDescription,
+      @required this.price,
+      @required this.imageUrl,
+      @required this.createdTime,
+      @required this.isfav = false});
 
   Map<String, dynamic> toMap() {
     return {
@@ -32,18 +31,17 @@ class ProductModel {
       'price': price,
       'imageUrl': imageUrl,
       'createdTime': createdTime,
-      'sizes': sizes
     };
   }
 
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
-        catId: map['catId'],
-        productName: map['productName'],
-        productDescription: map['productDescription'],
-        price: map['price'],
-        imageUrl: map['imageUrl'],
-        createdTime: map['createdTime'],
-        sizes: map['sizes']);
+      catId: map['catId'],
+      productName: map['productName'],
+      productDescription: map['productDescription'],
+      price: map['price'],
+      imageUrl: map['imageUrl'],
+      // createdTime: map['createdTime'],
+    );
   }
 }

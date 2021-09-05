@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:newproject/model/categiory_model.dart';
 import 'package:newproject/model/product_model.dart';
+import 'package:newproject/provider/auth_provider.dart';
+import 'package:newproject/provider/categioryProduct_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'cart_screen.dart';
 import 'home_screen.dart';
@@ -13,6 +17,7 @@ class ControlPage extends StatefulWidget {
 class _ControlPaageState extends State<ControlPage> {
   int newcurrentIndex = 0;
   ProductModel productModel;
+
   final List<Widget> pages = [HomeScreen(), CartPage(), ProfilePage()];
 
   void onTabTapped(int index) {
@@ -26,6 +31,7 @@ class _ControlPaageState extends State<ControlPage> {
     return Scaffold(
       body: pages[newcurrentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        fixedColor: Colors.green,
         //currentIndex: 0,
         onTap: onTabTapped, // new
         currentIndex: newcurrentIndex,
@@ -36,8 +42,8 @@ class _ControlPaageState extends State<ControlPage> {
             label: ('Home'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: ('cart'),
+            icon: Icon(Icons.favorite_border_outlined),
+            label: ('my favourit'),
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: ('Profile'))
         ],
