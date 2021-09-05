@@ -220,20 +220,8 @@ class CategoriesList extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(categories[index].imageurl),
-                    maxRadius: 40, backgroundColor: Colors.grey,
-                    // child: Container(
-                    //   margin: EdgeInsets.symmetric(horizontal: 5),
-                    //   height: 90,
-                    //   width: 150,
-                    //   decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(10),
-                    //       image: DecorationImage(
-                    //           colorFilter: ColorFilter.mode(
-                    //               Colors.black.withOpacity(0.3),
-                    //               BlendMode.darken),
-                    //           fit: BoxFit.contain,
-                    //           image: NetworkImage(categories[index].imageurl))),
-                    // ),
+                    maxRadius: 40,
+                    backgroundColor: Colors.grey,
                   ),
                 ),
                 InkWell(
@@ -253,17 +241,6 @@ class CategoriesList extends StatelessWidget {
                     child: Text(categories[index].nameAr))
               ],
             ),
-            //   Positioned.fill(
-            //       child: Align(
-            //     alignment: Alignment.center,
-            //     child: Text(categories[index].nameAr,
-            //         style: TextStyle(
-            //           fontSize: 20,
-            //           color: Colors.white,
-            //           fontWeight: FontWeight.w700,
-            //         )),
-            //   ))
-            // ],
           );
         });
   }
@@ -339,6 +316,3 @@ class ProductsWidget extends StatelessWidget {
     );
   }
 }
-
-// }
-// }

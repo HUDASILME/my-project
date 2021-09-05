@@ -45,51 +45,6 @@ class _CheckOutState extends State<CheckOut> {
   double total;
   List<OrderModel> myList;
 
-  // Widget _buildButton() {
-  //   return Column(
-  //       children: productProvider.userModelList.map((e) {
-  //     return Container(
-  //       height: 50,
-  //       child: MyButton(
-  //         name: "Buy",
-  //         onPressed: () {
-  //           if (productProvider.getCheckOutModelList.isNotEmpty) {
-  //             FirebaseFirestore.instance.collection("Order").add({
-  //               "Product": productProvider.getCheckOutModelList
-  //                   .map((c) => {
-  //                         "ProductName": c.name,
-  //                         "ProductPrice": c.price,
-  //                         "ProductQuetity": c.quentity,
-  //                         "ProductImage": c.image,
-  //                         "Product Color": c.color,
-  //                         "Product Size": c.size,
-  //                       })
-  //                   .toList(),
-  //               "TotalPrice": total.toStringAsFixed(2),
-  //               "UserName": e.userName,
-  //               "UserEmail": e.userEmail,
-  //               "UserNumber": e.userPhoneNumber,
-  //               "UserAddress": e.userAddress,
-  //               "UserId": user.uid,
-  //             });
-  //             setState(() {
-  //               myList.clear();
-  //             });
-
-  //             productProvider.addNotification("Notification");
-  //           } else {
-  //             _scaffoldKey.currentState.showSnackBar(
-  //               SnackBar(
-  //                 content: Text("No Item Yet"),
-  //               ),
-  //             );
-  //           }
-  //         },
-  //       ),
-  //     );
-  //   }).toList());
-  // }
-
   @override
   void initState() {
     productProvider =
@@ -102,29 +57,19 @@ class _CheckOutState extends State<CheckOut> {
   Widget build(BuildContext context) {
     user = FirebaseAuth.instance.currentUser;
     double subTotal = 0;
-    // double discount = 3;
-    // double discountRupees;
-    // double shipping = 60;
 
     productProvider = Provider.of<CategioryProductProvider>(context);
     productProvider.getCheckOutModelList.forEach((element) {
       subTotal += element.price * element.quentity;
     });
     total = subTotal;
-
-    // discountRupees = discount / 100 * subTotal;
-    // total = subTotal + shipping - discountRupees;
-    // if (productProvider.checkOutModelList.isEmpty) {
-    //   total = 0.0;
-    //   discount = 0.0;
-    //   shipping = 0.0;
-    // }
+    productProvider.checkOutModel.price = total;
     int index;
     return WillPopScope(
       onWillPop: () async {
         return Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (ctx) => HomeScreen(),
+            builder: (ctx) => ControlPage(),
           ),
         );
       },
@@ -188,18 +133,6 @@ class _CheckOutState extends State<CheckOut> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      // _buildBottomSingleDetail(
-                      //   startName: "Subtotal",
-                      //   endName: "\$ ${subTotal.toStringAsFixed(2)}",
-                      // ),
-                      // _buildBottomSingleDetail(
-                      //   startName: "Discount",
-                      //   endName: "${discount.toStringAsFixed(2)}%",
-                      // ),
-                      // _buildBottomSingleDetail(
-                      //   startName: "Shipping",
-                      //   endName: "\$ ${shipping.toStringAsFixed(2)}",
-                      // ),
                       _buildBottomSingleDetail(
                         startName: "Total",
                         endName: "\$ ${total.toStringAsFixed(2)}",
@@ -228,7 +161,7 @@ class _CheckOutState extends State<CheckOut> {
                                               fontWeight: FontWeight.bold),
                                         ),
                                         content: Text(
-                                            ' متاح فقط الدفع عند الاستلام'),
+                                            '  متاح فقط الدفع عند الاستلام يرجى تحديد مكانك'),
                                         actions: <Widget>[
                                           TextButton(
                                               onPressed: () {},
@@ -236,61 +169,61 @@ class _CheckOutState extends State<CheckOut> {
                                           TextButton(
                                               child: Text('تأكيد الطلب'),
                                               onPressed: () {
-                                                // AppRouter.router
-                                                //     .pushToNewWidget(
-                                                //         MapSample());
+                                                AppRouter.router
+                                                    .pushToNewWidget(
+                                                        MapScreen());
                                                 // Provider.of<CategioryProductProvider>(
                                                 //         context,
                                                 //         listen: false)
                                                 //     .getOrders(user.uid);
-                                                if (productProvider
-                                                    .getCheckOutModelList
-                                                    .isNotEmpty) {
-                                                  //add order
-                                                  FirebaseFirestore.instance
-                                                      .collection("Order")
-                                                      .add({
-                                                    "Product": productProvider
-                                                        .getCheckOutModelList
-                                                        .map((c) => {
-                                                              "ProductName":
-                                                                  c.ordername,
-                                                              "ProductPrice":
-                                                                  c.price,
-                                                              "ProductQuetity":
-                                                                  c.quentity,
-                                                              "ProductImage":
-                                                                  c.image,
-                                                              "Product Color":
-                                                                  c.color,
-                                                              "Product Size":
-                                                                  c.size,
-                                                            })
-                                                        .toList(),
-                                                    "TotalPrice": total
-                                                        .toStringAsFixed(2),
-                                                    "UserName": Provider.of<
-                                                                AuthProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .userModel
-                                                        .fullName,
-                                                    "UserEmail": user.email,
-                                                    "UserNumber": Provider.of<
-                                                                AuthProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .userModel
-                                                        .phoneNumber,
-                                                    "Useraddress": Provider.of<
-                                                                AuthProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .userModel
-                                                        .city,
-                                                    "UserId": user.uid,
-                                                  });
-                                                }
+                                                // if (productProvider
+                                                //     .getCheckOutModelList
+                                                //     .isNotEmpty) {
+                                                //   //add order
+                                                //   FirebaseFirestore.instance
+                                                //       .collection("Order")
+                                                //       .add({
+                                                //     "Product": productProvider
+                                                //         .getCheckOutModelList
+                                                //         .map((c) => {
+                                                //               "ProductName":
+                                                //                   c.ordername,
+                                                //               "ProductPrice":
+                                                //                   c.price,
+                                                //               "ProductQuetity":
+                                                //                   c.quentity,
+                                                //               "ProductImage":
+                                                //                   c.image,
+                                                //               "Product Color":
+                                                //                   c.color,
+                                                //               "Product Size":
+                                                //                   c.size,
+                                                //             })
+                                                //         .toList(),
+                                                //     "TotalPrice": total
+                                                //         .toStringAsFixed(2),
+                                                //     "UserName": Provider.of<
+                                                //                 AuthProvider>(
+                                                //             context,
+                                                //             listen: false)
+                                                //         .userModel
+                                                //         .fullName,
+                                                //     "UserEmail": user.email,
+                                                //     "UserNumber": Provider.of<
+                                                //                 AuthProvider>(
+                                                //             context,
+                                                //             listen: false)
+                                                //         .userModel
+                                                //         .phoneNumber,
+                                                //     "Useraddress": Provider.of<
+                                                //                 AuthProvider>(
+                                                //             context,
+                                                //             listen: false)
+                                                //         .userModel
+                                                //         .city,
+                                                //    "UserId": user.uid,
+                                                //   });
+                                                // }
                                                 // }
                                               })
                                         ],
